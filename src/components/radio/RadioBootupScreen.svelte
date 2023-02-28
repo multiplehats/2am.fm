@@ -3,6 +3,7 @@
 	import { fullyInitalized, pressedStart } from '$lib/radio/stores/store';
 	import isTouch from '$lib/shared/utils/is-touch';
 	import { onMount } from 'svelte';
+	import { hotkey } from '@svelteuidev/composables';
 
 	let isTouchDevice = false;
 
@@ -18,6 +19,7 @@
 		<button
 			class="h-full w-full border border-transparent select-auto cursor-pointer rounded-none bg-transparent py-2 px-4"
 			on:click={() => pressStart()}
+			use:hotkey={[['space', () => pressStart()]]}
 		>
 			{#if isTouchDevice}
 				Tap to play

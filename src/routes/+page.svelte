@@ -6,7 +6,12 @@
 	import RadioTrackInfo from '$components/radio/RadioTrackInfo.svelte';
 	import RadioYouTubeEmbed from '$components/radio/RadioYouTubeEmbed.svelte';
 	import { init, pressStart } from '$lib/radio/stores';
-	import { radioInitialized, pressedStart } from '$lib/radio/stores/store';
+	import {
+		radioInitialized,
+		pressedStart,
+		currentTrack,
+		fullyInitalized
+	} from '$lib/radio/stores/store';
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 
@@ -16,6 +21,10 @@
 		init(data.radioStations);
 	});
 </script>
+
+<svelte:head>
+		<title>{$pressedStart ? `NOW PLAYING: ${$currentTrack?.title}` : '2am.fm'}</title>
+</svelte:head>
 
 <div class="h-screen relative">
 	<RadioTopBar />

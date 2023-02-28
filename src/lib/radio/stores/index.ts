@@ -2,19 +2,8 @@ import { LOCALSTORAGE_KEY as LS_KEY } from '$lib/shared/constants';
 import { logger } from '$lib/shared/utils/logger';
 import type { RadioStationQuery } from '../queries';
 import { shuffleTracks } from '../utils/shuffle-radio-tracks';
-import {
-	currentTrack,
-	radioStore,
-	shuffleEnabledStore,
-	ytPlayerCtxStore,
-	pressedStartStore,
-	fullyInitalized,
-	isPlayingStore,
-	nextTrack,
-	isBufferingStore
-} from './store';
+import { currentTrack, radioStore, shuffleEnabledStore, ytPlayerCtxStore, pressedStartStore, fullyInitalized, isPlayingStore, nextTrack, isBufferingStore, previousTrack } from './store';
 import { get } from 'svelte/store';
-
 
 
 const log = logger('📻 [actions] radio');
@@ -199,8 +188,6 @@ export const playNext = async () => {
 	const ytPlayerCtx = get(ytPlayerCtxStore);
 	const next = get(nextTrack);
 
-	// isBufferingStore.set(true);
-
 	if (!next) {
 		throw new Error('No next track found');
 	}
@@ -209,6 +196,26 @@ export const playNext = async () => {
 
 	isBufferingStore.set(true);
 	changeTrack(next.id);
+
+	setTimeout(async () => {
+		await ytPlayerCtx?.playVideo();
+
+		isBufferingStore.set(false);
+	}, 300);
+};
+
+export const playPrev = async () => {
+	const ytPlayerCtx = get(ytPlayerCtxStore);
+	const previous = get(previousTrack);
+
+	if (!previous) {
+		throw new Error('No previous track found');
+	}
+
+	log.info('Playing previous track:', previous.title);
+
+	isBufferingStore.set(true);
+	changeTrack(previous.id);
 
 	setTimeout(async () => {
 		await ytPlayerCtx?.playVideo();

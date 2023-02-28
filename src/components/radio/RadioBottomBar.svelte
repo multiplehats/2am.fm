@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Pulse from '$components/shared/Pulse.svelte';
-	import { togglePlay, playNext } from '$lib/radio/stores';
+	import { togglePlay, playNext, playPrev } from '$lib/radio/stores';
 	import { isPlaying, isBuffering, isPaused } from '$lib/radio/stores/store';
+	import { hotkey } from '@svelteuidev/composables';
 	import { Pause, Play, SkipForward, SkipBack, Book } from 'lucide-svelte';
 	import { fly } from 'svelte/transition';
 </script>
@@ -16,7 +16,13 @@
 	>
 		<div class="flex items-center space-x-6 justify-center">
 			<div class="flex-auto flex items-center justify-evenly">
-				<button type="button" class="text-gray-200 xl:block" aria-label="Next">
+				<button
+					type="button"
+					on:click={() => playPrev()}
+					use:hotkey={[['ArrowLeft', () => playPrev()]]}
+					class="text-gray-200 xl:block"
+					aria-label="Previous"
+				>
 					<SkipBack class="sm:w-6 sm:h-6 h-5 w-5 fill-current text-current" />
 				</button>
 			</div>
@@ -26,9 +32,10 @@
 				class="group bg-gradient-to-b px-3 py-2 rounded-full text-sm border leading-none from-gray-800 to-gray-800/70 text-gray-200 border-gray-700 transition-all duration-500 mx-auto text-center flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 ring-1 ring-slate-900/5 shadow-md"
 				aria-label={$isPlaying ? 'Pause' : $isBuffering ? 'Buffering' : 'Play'}
 				disabled={$isBuffering}
+				use:hotkey={[['space', () => togglePlay()]]}
 				on:click={() => togglePlay()}
 			>
-				{#if $isPlaying || ($isBuffering)}
+				{#if $isPlaying || $isBuffering}
 					<Pause class="w-8 h-8 fill-current text-current" />
 				{:else if $isPaused && !$isBuffering}
 					<Play class="w-8 h-8 fill-current text-current" />
@@ -39,6 +46,7 @@
 				<button
 					type="button"
 					on:click={() => playNext()}
+					use:hotkey={[['ArrowRight', () => playNext()]]}
 					class="text-gray-200 xl:block"
 					aria-label="Next"
 				>
