@@ -8,9 +8,14 @@ import {
 	shuffleEnabledStore,
 	ytPlayerCtxStore,
 	pressedStartStore,
-	fullyInitalized
+	fullyInitalized,
+	isPlayingStore,
+	nextTrack,
+	isBufferingStore
 } from './store';
 import { get } from 'svelte/store';
+
+
 
 const log = logger('📻 [actions] radio');
 
@@ -175,4 +180,39 @@ export const pressStart = () => {
 	setTimeout(() => {
 		pressedStartStore.set(true);
 	}, 1000);
+};
+
+export const togglePlay = () => {
+	const ytPlayerCtx = get(ytPlayerCtxStore);
+	const isPlaying = get(isPlayingStore);
+
+	if (isPlaying) {
+		log.info('Pausing');
+		ytPlayerCtx?.pauseVideo();
+	} else {
+		log.info('Playing');
+		ytPlayerCtx?.playVideo();
+	}
+};
+
+export const playNext = async () => {
+	const ytPlayerCtx = get(ytPlayerCtxStore);
+	const next = get(nextTrack);
+
+	// isBufferingStore.set(true);
+
+	if (!next) {
+		throw new Error('No next track found');
+	}
+
+	log.info('Playing next track:', next.title);
+
+	isBufferingStore.set(true);
+	changeTrack(next.id);
+
+	setTimeout(async () => {
+		await ytPlayerCtx?.playVideo();
+
+		isBufferingStore.set(false);
+	}, 300);
 };

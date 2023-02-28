@@ -3,7 +3,7 @@
 </script>
 
 <div
-	class="absolute select-none bg-transparent w-full h-full justify-center items-center z-40 flex content-center"
+	class="absolute bg-transparent w-full h-full justify-center items-center z-40 flex content-center"
 >
 	<div class="font-serif text-2xl text-white">
 		{$currentTrack?.title}

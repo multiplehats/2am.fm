@@ -4,8 +4,12 @@ import type { RadioStationStore } from '../types';
 import { derived, writable } from 'svelte/store';
 import type { YouTubePlayer } from 'youtube-player/dist/types';
 
+
 export const shuffleEnabledStore = lsWritable<boolean>(LS_KEY.shuffleEnabled, true);
 export const radioStore = writable<RadioStationStore[] | null>(null);
+export const isPlayingStore = writable<boolean>(false);
+export const isPausedStore = writable<boolean>(false);
+export const isBufferingStore = writable<boolean>(false);
 export const ytPlayerCtxStore = writable<YouTubePlayer | null>(null);
 export const ytPlayerReadyStore = writable<boolean>(false);
 export const pressedStartStore = writable<boolean>(false);
@@ -16,6 +20,18 @@ export const radioInitialized = derived([radioStore], ([$radioStore]) => {
 
 export const pressedStart = derived([pressedStartStore], ([$pressedStartStore]) => {
 	return $pressedStartStore;
+});
+
+export const isPlaying = derived([isPlayingStore], ([$isPlayingStore]) => {
+	return $isPlayingStore;
+});
+
+export const isBuffering = derived([isBufferingStore], ([$isBufferingStore]) => {
+	return $isBufferingStore;
+});
+
+export const isPaused = derived([isPausedStore], ([$isPausedStore]) => {
+	return $isPausedStore;
 });
 
 /***********************

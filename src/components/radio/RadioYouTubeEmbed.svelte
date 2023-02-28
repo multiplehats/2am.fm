@@ -1,8 +1,17 @@
 <script lang="ts">
 	import YouTube from '$components/shared/YouTube.svelte';
-	import { currentTrack, ytPlayerCtxStore, ytPlayerReadyStore } from '$lib/radio/stores/store';
+	import {
+		currentTrack,
+		ytPlayerCtxStore,
+		ytPlayerReadyStore,
+		isPlayingStore,
+		isBufferingStore,
+		isPausedStore
+	} from '$lib/radio/stores/store';
+	import { logger } from '$lib/shared/utils/logger';
 	import type { Options } from 'youtube-player/dist/types';
 
+	const log = logger('RadioYouTubeEmbed');
 	const protocol = import.meta.env.DEV ? 'http' : 'https';
 	const playerOptions: Options = {
 		host: `${protocol}://www.youtube-nocookie.com`,
@@ -29,6 +38,22 @@
 	>
 		<YouTube
 			bind:player={$ytPlayerCtxStore}
+			on:play={({ detail }) => {
+				log.debug('on:play', detail);
+				isPlayingStore.set(true);
+				isBufferingStore.set(false);
+				isPausedStore.set(false);
+			}}
+			on:buffering={({ detail }) => {
+				log.debug('on:buffering', detail);
+				isPlayingStore.set(false);
+				isBufferingStore.set(true);
+			}}
+			on:pause={({ detail }) => {
+				log.debug('on:pause', detail);
+				isPausedStore.set(true);
+				isPlayingStore.set(false);
+			}}
 			videoId={$currentTrack.youtubeId}
 			on:ready={() => ytPlayerReadyStore.set(true)}
 		/>
