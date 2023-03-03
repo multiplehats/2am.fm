@@ -1,5 +1,6 @@
 <script lang="ts">
 	import YouTube from '$components/shared/YouTube.svelte';
+	import { playNext } from '$lib/radio/stores';
 	import {
 		currentTrack,
 		ytPlayerCtxStore,
@@ -53,6 +54,10 @@
 				log.debug('on:pause', detail);
 				isPausedStore.set(true);
 				isPlayingStore.set(false);
+			}}
+			on:end={() => {
+				log.debug('on:end');
+				playNext();
 			}}
 			videoId={$currentTrack.youtubeId}
 			on:ready={() => ytPlayerReadyStore.set(true)}
